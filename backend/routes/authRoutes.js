@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Assuming a User model exists
+const AuthController = require('../controllers/authController');// Assuming a User model exists
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ router.post('/register', async (req, res) => {
     try {
         const { name, email, password, role } = req.body; // role could be 'buyer' or 'seller'
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ name, email, password: hashedPassword, role });
+        const user = new AuthController({ name, email, password: hashedPassword, role });
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
