@@ -3,62 +3,43 @@ const ProductModel = require('../models/productModel');
 const ProductController = {
   async getAll(req, res) {
     try {
-      const rows = await ProductModel.findAll(); // ✅ corrigido
-      res.json(rows);
-    } catch {
-      res.status(500).json({ error: 'Erro ao buscar produtos.' });
+      const products = ProductModel.findAll();
+      res.json(products)
+    } catch (err) {
+      res.status(500).json({ error: "Erro ao buscar Produto :(" });
     }
   },
 
   async getById(req, res) {
     try {
-      const row = await ProductModel.findById(req.params.id); // ✅ corrigido
-      if (!row) return res.status(404).json({ error: 'Produto não encontrado.' });
-      res.json(row);
+      const product = ProductModel.findById(req.params.id);
+      if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
+      res.json(product)
     } catch {
-      res.status(500).json({ error: 'Erro ao buscar produto.' });
+      res.status(500).json({ error: 'Erro ao buscar produto estamos fazendo o possivel pra encontrar o produto.' });
     }
   },
 
   async create(req, res) {
-    const { name, description, price } = req.body;
-    if (!name || !price)
+    const { name, description, price} = req.body;
+    if(!name || !price)
       return res.status(400).json({ error: 'Nome e preço são obrigatórios.' });
-
     try {
-      await ProductModel.create(name, description, price);
-      res.status(201).json({ message: 'Produto criado com sucesso.' });
+      const image = req.file ? `/uploads/${req.file.filename}` : product.image;
+      ProductModel.update(req.params.id, name, description, price, image);
+      res.json({ message: 'Produto atualizado com sucesso.'});
     } catch {
-      res.status(500).json({ error: 'Erro ao criar produto.' });
+      res.status(500).json({ error: 'Erro ao atualizar o produto, estamos verificando...' })
     }
   },
-
-  async update(req, res) {
-    const { name, description, price } = req.body;
-    if (!name || !price)
-      return res.status(400).json({ error: 'Nome e preço são obrigatórios.' });
-
-    try {
-      const row = await ProductModel.findById(req.params.id); // ✅ corrigido
-      if (!row) return res.status(404).json({ error: 'Produto não encontrado.' });
-
-      await ProductModel.update(req.params.id, name, description, price);
-      res.json({ message: 'Produto atualizado com sucesso.' });
-    } catch {
-      res.status(500).json({ error: 'Erro ao atualizar produto.' });
-    }
-  },
-
   async delete(req, res) {
     try {
-      const row = await ProductModel.findById(req.params.id); // ✅ corrigido
-      if (!row) return res.status(404).json({ error: 'Produto não encontrado.' });
-
-      await ProductModel.delete(req.params.id);
-      res.json({ message: 'Produto deletado com sucesso.' });
-    } catch (err) {
-      console.log(err);
-      res.status(500).json({ error: err.message });
+      const product = ProductModel.findById(req.params.id);
+      if (!product) return res.status(404).json({ error: 'Produto não encontrado' })
+        ProductModel.delete(req.params.id);
+      res.json({ message: "Produto deletado com sucesso." })
+    } catch {
+      res.status(500).json({ error: 'Erro ao deletar produto.' });
     }
   },
 };
