@@ -6,7 +6,7 @@ const ProductController = {
       const products = ProductModel.findAll();
       res.json(products);
     } catch {
-      res.status(500).json({ error: 'Erro ao buscar produtos.' });
+      res.status(500).json({ error: 'Erro ao buscar Produto :(' });
     }
   },
 
@@ -16,7 +16,7 @@ const ProductController = {
       if (!product) return res.status(404).json({ error: 'Produto não encontrado.' });
       res.json(product);
     } catch {
-      res.status(500).json({ error: 'Erro ao buscar produto.' });
+      res.status(500).json({ error: 'Erro ao buscar produto estamos fazendo o possivel pra encontrar o produto.' });
     }
   },
 
@@ -44,7 +44,7 @@ const ProductController = {
       ProductModel.update(req.params.id, name, description, price, image);
       res.json({ message: 'Produto atualizado com sucesso.' });
     } catch {
-      res.status(500).json({ error: 'Erro ao atualizar produto.' });
+      res.status(500).json({ error: 'Erro ao atualizar o produto, estamos verificando...' });
     }
   },
 
@@ -55,7 +55,7 @@ const ProductController = {
       ProductModel.delete(req.params.id);
       res.json({ message: 'Produto deletado com sucesso.' });
     } catch {
-      res.status(500).json({ error: 'Erro ao deletar produto.' });
+      res.status(500).json({ error: 'Erro ao deletar produto, estamos verificando.' });
     }
   },
 };
