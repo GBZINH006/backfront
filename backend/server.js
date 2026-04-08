@@ -15,5 +15,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+const PORT = 3000
+
+app.listen(() => {
+    console.log(`Servidor rodando na porta ${PORT}`)
+})
