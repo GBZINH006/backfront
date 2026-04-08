@@ -1,43 +1,21 @@
-const mongoose = require('mongoose');
+const db = require('../config/db');
 
-const productSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    description: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    category: {
-        type: String,
-        required: true
-    },
-    image: {
-        type: String,
-        required: false
-    },
-    stock: {
-        type: Number,
-        required: true,
-        min: 0,
-        default: 0
-    },
-    seller: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-});
+const ProductModel = {
+  findAll: () => {
+    return db.prepare('SELECT * FROM products').all();
+  },
+  findById: (id) => {
+    return db.prepare('SELECT * FROM products WHERE id = ?').get(id);
+  },
+  create: (name, description, price) => {
+    return db.prepare('INSERT INTO products (name, description, price) VALUES (?, ?, ?)').run(name, description, price);
+  },
+  update: (id, name, description, price) => {
+    return db.prepare('UPDATE products SET name = ?, description = ?, price = ? WHERE id = ?').run(name, description, price, id);
+  },
+  delete: (id) => {
+    return db.prepare('DELETE FROM products WHERE id = ?').run(id);
+  },
+};
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = ProductModel;
