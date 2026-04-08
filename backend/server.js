@@ -17,6 +17,6 @@ app.use('/products', productRoutes);
 
 const PORT = 3000
 
-app.listen(() => {
+app.listen(PORT, () => {
     console.log(`Servidor rodando na porta http://localhost:${PORT}`)
 })
