@@ -3,38 +3,52 @@ const jwt = require('jsonwebtoken');
 const UserModel = require('../models/userModel');
 
 const AuthController = {
+
   async register(req, res) {
     const { name, email, password } = req.body;
-    if (!name || !email || !password)
+
+    if (!name || !email || !password) {
       return res.status(400).json({ error: 'Preencha todos os campos.' });
+    }
 
     try {
-      const [existing] = await UserModel.findByEmail(email);
-      if (existing.length > 0)
+      const existing = UserModel.findByEmail(email);
+
+      if (existing) {
         return res.status(400).json({ error: 'E-mail já cadastrado.' });
+      }
 
       const hashed = await bcrypt.hash(password, 10);
-      await UserModel.create(name, email, hashed);
+
+      UserModel.create(name, email, hashed);
+
       return res.status(201).json({ message: 'Usuário criado com sucesso.' });
-    } catch {
+
+    } catch (err) {
+      console.log('ERRO REGISTER:', err);
       return res.status(500).json({ error: 'Erro interno.' });
     }
   },
 
   async login(req, res) {
     const { email, password } = req.body;
-    if (!email || !password)
+
+    if (!email || !password) {
       return res.status(400).json({ error: 'Preencha todos os campos.' });
+    }
 
     try {
-      const [rows] = await UserModel.findByEmail(email);
-      if (rows.length === 0)
-        return res.status(401).json({ error: 'Credenciais inválidas.' });
+      const user = UserModel.findByEmail(email);
 
-      const user = rows[0];
+      if (!user) {
+        return res.status(401).json({ error: 'Usuário não encontrado.' });
+      }
+
       const match = await bcrypt.compare(password, user.password);
-      if (!match)
-        return res.status(401).json({ error: 'Credenciais inválidas.' });
+
+      if (!match) {
+        return res.status(401).json({ error: 'Senha incorreta.' });
+      }
 
       const token = jwt.sign(
         { id: user.id, role: user.role },
@@ -43,10 +57,13 @@ const AuthController = {
       );
 
       return res.json({ token });
-    } catch {
-      return res.status(500).json({ error: 'Erro interno.' });
+
+    } catch (err) {
+      console.log('ERRO LOGIN:', err);
+      return res.status(500).json({ error: err.message });
     }
-  },
+  }
+
 };
 
 module.exports = AuthController;

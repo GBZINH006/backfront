@@ -1,14 +1,19 @@
 const db = require('../config/db');
 
 const UserModel = {
-  findByEmail: (email) => {
-    const stmt = db.prepare('SELECT * FROM users WHERE email = ?');
-    return stmt.get(email);
+
+  findByEmail(email) {
+    return db
+      .prepare('SELECT * FROM users WHERE email = ?')
+      .get(email);
   },
-  create: (name, email, hashedPassword) => {
-    const stmt = db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)');
-    return stmt.run(name, email, hashedPassword);
-  },
+
+  create(name, email, password) {
+    return db
+      .prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)')
+      .run(name, email, password);
+  }
+
 };
 
 module.exports = UserModel;
